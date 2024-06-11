@@ -5,9 +5,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'MERN Auth API',
+      title: 'CRUD API',
       version: '1.0.0',
-      description: 'A simple Express Auth API',
+      description: 'A simple Express CRUD API',
     },
     servers: [
       {

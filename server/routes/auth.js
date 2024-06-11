@@ -6,8 +6,8 @@ const { check, validationResult } = require('express-validator');
 /**
  * @swagger
  * tags:
- *   name: Admin Authorization
- *   description: Authentication Endpoints
+ *   name: AdminAuth
+ *   description: Authentication
  */
 
 /**
