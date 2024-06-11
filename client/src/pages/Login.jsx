@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { useDispatch, useSelector} from 'react-redux';
 import { useNavigate,Link } from 'react-router-dom';
 import { signinUser } from '../redux/authSlice';
-
+import toast from 'react-hot-toast';
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,6 +14,7 @@ export const Login = () => {
 
     if (user) {
       navigate('/');
+      // toast.success('Login Successfully')
     }
   }, [user, navigate]);
 
@@ -23,12 +24,17 @@ export const Login = () => {
   };
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen ">
+    <div className="bg-gradient-to-b from-yellow-400 to-yellow-600 flex items-center justify-center min-h-screen ">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md"
       >
-        <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">Login</h2>
+        <div className='flex flex-row'>
+          <div className='bg-yellow-500 p-1 w-2 h-10 mr-12' > </div>
+          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 headingfont">CRUD OPERATIONS</h2>
+        </div>
+        <h2 className="text-2xl font-bold mb-2 text-center text-gray-800  headingfont">LOGIN</h2>
+        <h2 className="text-sm  mb-6 text-center text-gray-800 headingfont">Enter your credentials to access your account</h2>
         {error && <p className="text-red-500">{error.message}</p>}
         <div className="mb-6">
           <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">Email</label>
@@ -54,13 +60,13 @@ export const Login = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-300"
+          className="w-full bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-300"
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
            <p className="mt-4 text-sm text-center text-gray-600">
           If you don't have an account,{' '}
-          <Link to="/signup" className="text-blue-600 hover:underline">
+          <Link to="/signup" className="text-yellow-500 hover:underline">
             Signup here
           </Link>
         </p>
