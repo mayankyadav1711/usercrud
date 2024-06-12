@@ -84,13 +84,11 @@ exports.updateStudent = async (req, res) => {
 // Delete a student by ID
 exports.deleteStudent = async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id);
+    const student = await Student.findByIdAndDelete(req.params.id);
 
     if (!student) {
       return res.status(404).json({ msg: 'Student not found' });
     }
-
-    await student.remove();
 
     res.json({ msg: 'Student removed' });
   } catch (err) {
@@ -101,3 +99,4 @@ exports.deleteStudent = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
