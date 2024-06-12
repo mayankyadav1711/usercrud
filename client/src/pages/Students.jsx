@@ -8,6 +8,10 @@ import {
 } from "../redux/studentSlice";
 import Sidebar from "../components/sidebar";
 import Modal from "react-modal";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import toast from "react-hot-toast";
+
 Modal.setAppElement("#root");
 
 export const Students = () => {
@@ -40,24 +44,6 @@ export const Students = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingId) {
-      dispatch(updateStudent({ id: editingId, student: form }));
-    } else {
-      dispatch(addStudent(form));
-    }
-    setForm({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      enrollmentNo: "",
-      dateOfAdmission: "",
-    });
-    setEditingId(null);
-    closeModal();
   };
 
   const handleEdit = (student) => {
@@ -126,6 +112,26 @@ export const Students = () => {
     }
     setSortConfig({ key, direction });
   };
+
+  const initialValues = {
+    name: "",
+    email: "",
+    phoneNumber: "",
+    enrollmentNo: "",
+    dateOfAdmission: "",
+  };
+
+  const StudentScheme = Yup.object().shape({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string()
+      .email("Invalid email address format")
+      .required("Email is required"),
+    phoneNumber: Yup.string()
+      .min(10, "Phone number should be 10 digits long")
+      .required("Phone Number is required"),
+    enrollmentNo: Yup.string().required("Enrollment is required"),
+    dateOfAdmission: Yup.date().required("Date is required"),
+  });
   return (
     <div className="flex">
       <Sidebar />
@@ -233,65 +239,80 @@ export const Students = () => {
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
           contentLabel="Add/Edit Student"
-          className="modal"
+          className="modal w-[40rem]"
           overlayClassName="modal-overlay"
         >
           <h2>{editingId ? "Edit Student" : "Add Student"}</h2>
-          <form onSubmit={handleSubmit} className="mb-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={form.name}
-              onChange={handleChange}
-              className="border p-2 mb-2 w-full"
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={handleChange}
-              className="border p-2 mb-2 w-full"
-            />
-            <input
-              type="text"
-              name="phoneNumber"
-              placeholder="Phone Number"
-              value={form.phoneNumber}
-              onChange={handleChange}
-              className="border p-2 mb-2 w-full"
-            />
-            <input
-              type="text"
-              name="enrollmentNo"
-              placeholder="Enrollment No"
-              value={form.enrollmentNo}
-              onChange={handleChange}
-              className="border p-2 mb-2 w-full"
-            />
-            <input
-              type="date"
-              name="dateOfAdmission"
-              value={form.dateOfAdmission}
-              onChange={handleChange}
-              className="border p-2 mb-2 w-full"
-            />
-            <div className="flex flex-row justify-between">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white p-2 rounded"
-              >
-                {editingId ? "Update" : "Add"} Student
-              </button>
-              <button
-                onClick={closeModal}
-                className="bg-gray-500 text-white p-2 rounded"
-              >
-                Close
-              </button>
-            </div>
-          </form>
+          <Formik
+            initialValues={editingId ? form : initialValues}
+            validationSchema={StudentScheme}
+            onSubmit={(values, { setSubmitting }) => {
+              if (editingId) {
+                dispatch(updateStudent({ id: editingId, student: values }));
+              } else {
+                dispatch(addStudent(values));
+              }
+              setSubmitting(false);
+              closeModal();
+            }}
+          >
+            {({ isSubmitting, setFieldValue, values }) => (
+              <Form>
+                <Field
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  className="border p-2 mb-2 w-full"
+                />
+                <ErrorMessage name="name" component="div" />
+
+                <Field
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  className="border p-2 mb-2 w-full"
+                />
+                <ErrorMessage name="email" component="div" />
+
+                <Field
+                  type="text"
+                  name="phoneNumber"
+                  placeholder="Phone Number"
+                  className="border p-2 mb-2 w-full"
+                />
+                <ErrorMessage name="phoneNumber" component="div" />
+                <Field
+                  type="text"
+                  name="enrollmentNo"
+                  placeholder="Enrollment No"
+                  className="border p-2 mb-2 w-full"
+                />
+                <ErrorMessage name="enrollmentNo" component="div" />
+                <Field
+                  type="date"
+                  name="dateOfAdmission"
+                  className="border p-2 mb-2 w-full"
+                />
+                <ErrorMessage name="dateOfAdmission" component="div" />
+                <div className="flex flex-row justify-between">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white p-2 rounded"
+                    disabled={isSubmitting}
+                  >
+                    {editingId ? "Update" : "Add"} Student
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="bg-gray-500 text-white p-2 rounded"
+                  >
+                    Close
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </Modal>
       </div>
     </div>
